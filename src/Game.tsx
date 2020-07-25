@@ -1,8 +1,9 @@
 
-export type CALLBACK = (positions: number[]) => void;
+export type PositionObserver = ((position: [number, number]) => void) | null
 
-let knightPosition = [1, 7]
-let observer:CALLBACK | null = null
+
+let knightPosition: [number, number] = [1, 7]
+let observer:PositionObserver | null = null
 
 const emitCharge = () => {
   if (observer) {
@@ -10,7 +11,7 @@ const emitCharge = () => {
   }
 }
 
-export function observe(o: CALLBACK) {
+export function observe(o: PositionObserver) {
   if (observer) {
     observer(knightPosition);
   }

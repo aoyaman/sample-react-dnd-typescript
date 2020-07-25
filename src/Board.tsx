@@ -1,49 +1,62 @@
 import React from "react";
+import { DndProvider } from 'react-dnd'
+import { HTML5Backend } from 'react-dnd-html5-backend'
+
 import Square from "./Square";
 import Knight from "./Knight";
+import BoardSquare from "./BoardSquare";
 import { moveKnight, canMoveKnight } from './Game'
+import { ItemTypes } from './Constants'
+import { useDrop } from 'react-dnd'
 
-type Props = {
-  knightPosition: number[],
-};
 
-const Board: React.FC<Props> = ({ knightPosition }) => {
+/** Styling properties applied to the board element */
+const boardStyle: React.CSSProperties = {
+  width: '100%',
+  height: '100%',
+  display: 'flex',
+  flexWrap: 'wrap',
+}
+/** Styling properties applied to each square element */
+const squareStyle: React.CSSProperties = { width: '12.5%', height: '12.5%' }
 
-  const renderSquare = (i: number, [knightX, knightY]:number[]) => {
+
+export interface BoardProps {
+  knightPosition: [number, number]
+}
+
+export const Board: React.FC<BoardProps> = ({
+  knightPosition: [knightX, knightY]
+}) => {
+
+  const renderSquare = (i: number) => {
     const x = i % 8
     const y = Math.floor(i / 8)
-    const isKnightHere = x === knightX && y === knightY
-    const black = (x + y) % 2 === 1
-    const piece = isKnightHere ? <Knight /> : null
 
     return (
-      <div key={i} style={{ width: '12.5%', height: '12.5%' }} onClick={()=>handleSquareClick(x,y)}>
-        <Square black={black}>{piece}</Square>
+      <div key={i} style={squareStyle}>
+        <BoardSquare x={x} y={y}>
+          {renderPiece(x, y)}
+        </BoardSquare>
       </div>
     )
   }
-
-  const handleSquareClick = (toX:number, toY:number) => {
-    if (canMoveKnight(toX, toY)) {
-      moveKnight(toX, toY);
-    }
+  const renderPiece = (x: number, y: number) => {
+    const isKnightHere = x === knightX && y === knightY
+    return isKnightHere ? <Knight /> : null
   }
 
   const squares = []
   for (let i = 0; i < 64; i++) {
-    squares.push(renderSquare(i, knightPosition))
+    squares.push(renderSquare(i))
   }
 
   return (
-    <div
-      style={{
-        width: "100%",
-        height: "100%" ,
-        display: 'flex',
-        flexWrap: 'wrap'
-      }}>
-      {squares}
-    </div>
+    <DndProvider backend={HTML5Backend}>
+      <div style={boardStyle}>
+        {squares}
+      </div>
+    </DndProvider>
   );
 };
 

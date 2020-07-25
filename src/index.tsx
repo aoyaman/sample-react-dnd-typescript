@@ -3,15 +3,13 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import * as serviceWorker from './serviceWorker';
 
-import Board from './Board'
+import App from './App'
 import { observe } from './Game'
 
 observe((knightPosition) =>
 ReactDOM.render(
   <React.StrictMode>
-    <div style={{ width: '500px', height: '500px', border: '1px solid black' ,fontSize: "50px" }}>
-      <Board knightPosition={knightPosition} />
-      </div>
+    <App />
   </React.StrictMode>,
   document.getElementById('root')
 ));
